@@ -49,7 +49,7 @@ export function ResultsTable({
             <SelectValue placeholder="All Semesters" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Semesters</SelectItem>
+            <SelectItem value="1">All Semesters</SelectItem>
             {semesters.map(semester => (
               <SelectItem key={semester} value={semester.toString()}>
                 Semester {semester}

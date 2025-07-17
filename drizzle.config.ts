@@ -1,7 +1,10 @@
+import { config as loadEnv } from "dotenv";
+loadEnv();
+
 import { defineConfig } from "drizzle-kit";
 
 if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL, ensure the database is provisioned");
+  throw new Error("DATABASE_URL is missing, ensure the database is provisioned");
 }
 
 export default defineConfig({
@@ -9,6 +12,6 @@ export default defineConfig({
   schema: "./shared/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    url: "postgres://postgres:tecH624$@localhost:5432/student_result_db",
   },
 });

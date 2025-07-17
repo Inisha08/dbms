@@ -136,3 +136,6 @@ Preferred communication style: Simple, everyday language.
 - PostgreSQL dialect with connection pooling
 
 The application follows a modern full-stack architecture with clear separation of concerns, type safety throughout, and a focus on developer experience and user interface quality.
+
+
+npm run dev
