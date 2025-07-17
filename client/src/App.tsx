@@ -10,6 +10,7 @@ import TeacherDashboard from "@/pages/teacher-dashboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
+  console.log("app is running");
   return (
     <Switch>
       <Route path="/" component={Landing} />

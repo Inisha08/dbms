@@ -1,17 +1,16 @@
-import { useState } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Download, FileText, LogOut, Moon, Sun, TrendingUp, Calculator, BookOpen } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { useToast } from "@/hooks/use-toast";
 import { ResultsTable } from "@/components/results-table";
 import { getStoredAuth, logout } from "@/lib/auth";
-import { calculateGPA, calculateCGPA, getSemesterWiseGPA } from "@/lib/gpa-calculator";
-import type { StudentWithResults } from "@shared/schema";
+import { calculateCGPA, getSemesterWiseGPA } from "@/lib/gpa-calculator";
+
+import type { Student, ResultEntry } from "@/lib/gpa-calculator";
 
 export default function StudentDashboard() {
   const [, setLocation] = useLocation();
@@ -19,7 +18,7 @@ export default function StudentDashboard() {
   const { toast } = useToast();
   const auth = getStoredAuth();
 
-  const { data: studentData, isLoading } = useQuery<StudentWithResults>({
+  const { data: studentData, isLoading } = useQuery<Student>({
     queryKey: ["/api/students", auth.user?.id, "with-results"],
     enabled: !!auth.user?.id,
   });
@@ -52,7 +51,8 @@ export default function StudentDashboard() {
     );
   }
 
-  const results = studentData?.results || [];
+  // Safely get results as ResultEntry[]
+  const results: ResultEntry[] = studentData?.results || [];
   const cgpaData = calculateCGPA(results);
   const semesterGPAs = getSemesterWiseGPA(results);
 
@@ -103,6 +103,7 @@ export default function StudentDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                {/* Pass results as ResultEntry[] */}
                 <ResultsTable results={results} />
               </CardContent>
             </Card>

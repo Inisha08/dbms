@@ -1,45 +1,68 @@
 import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { GradeBadge } from "./grade-badge";
-import type { ResultWithDetails } from "@shared/schema";
+import type { ResultEntry } from "@/lib/gpa-calculator";
 
 interface ResultsTableProps {
-  results: ResultWithDetails[];
+  results: ResultEntry[];
   showStudent?: boolean;
   showActions?: boolean;
-  onEdit?: (result: ResultWithDetails) => void;
+  onEdit?: (result: ResultEntry) => void;
   onDelete?: (resultId: number) => void;
 }
 
-export function ResultsTable({ 
-  results, 
-  showStudent = false, 
-  showActions = false, 
+export function ResultsTable({
+  results,
+  showStudent = false,
+  showActions = false,
   onEdit,
-  onDelete 
+  onDelete,
 }: ResultsTableProps) {
-  const [semesterFilter, setSemesterFilter] = useState<string>("");
+  // Use "all" string as default filter for all semesters
+  const [semesterFilter, setSemesterFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredResults = results.filter(result => {
-    const matchesSemester = !semesterFilter || result.semester.toString() === semesterFilter;
-    const matchesSearch = !searchTerm || 
-      result.subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (showStudent && result.student.name.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+  const filteredResults = results.filter((result) => {
+    const matchesSemester =
+      semesterFilter === "all" || result.semester.toString() === semesterFilter;
+
+    const matchesSearch =
+      !searchTerm ||
+      result.subject_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (showStudent &&
+        // If you have student name available, you can add it here instead of student_id
+        false);
+
     return matchesSemester && matchesSearch;
   });
 
-  const semesters = Array.from(new Set(results.map(r => r.semester))).sort();
+  const semesters = Array.from(new Set(results.map((r) => r.semester))).sort();
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Input
-            placeholder={showStudent ? "Search by student or subject..." : "Search by subject..."}
+            placeholder={
+              showStudent
+                ? "Search by student or subject..."
+                : "Search by subject..."
+            }
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -49,8 +72,8 @@ export function ResultsTable({
             <SelectValue placeholder="All Semesters" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="1">All Semesters</SelectItem>
-            {semesters.map(semester => (
+            <SelectItem value="all">All Semesters</SelectItem>
+            {semesters.map((semester) => (
               <SelectItem key={semester} value={semester.toString()}>
                 Semester {semester}
               </SelectItem>
@@ -75,25 +98,26 @@ export function ResultsTable({
           <TableBody>
             {filteredResults.length === 0 ? (
               <TableRow>
-                <TableCell 
-                  colSpan={showStudent ? (showActions ? 7 : 6) : (showActions ? 6 : 5)} 
+                <TableCell
+                  colSpan={
+                    showStudent ? (showActions ? 7 : 6) : showActions ? 6 : 5
+                  }
                   className="text-center py-8 text-muted-foreground"
                 >
                   No results found
                 </TableCell>
               </TableRow>
             ) : (
-              filteredResults.map(result => (
+              filteredResults.map((result) => (
                 <TableRow key={result.id}>
                   {showStudent && (
                     <TableCell className="font-medium">
-                      {result.student.name}
+                      {/* Replace false above with actual student name if available */}
+                      Student ID: {result.student_id}
                     </TableCell>
                   )}
-                  <TableCell className="font-medium">
-                    {result.subject.name}
-                  </TableCell>
-                  <TableCell>{result.subject.credits}</TableCell>
+                  <TableCell className="font-medium">{result.subject_name}</TableCell>
+                  <TableCell>{result.credits}</TableCell>
                   <TableCell>
                     <GradeBadge grade={result.grade} />
                   </TableCell>
