@@ -11,13 +11,17 @@ export interface ResultEntry {
   student_id: number;
   subject_id: number;
   grade: string;
-  points: string;
+  points: number;
   semester: number;
   academic_year: string;
   teacher_id: number;
-  subject_name: string;
-  code: string;
-  credits: number;
+
+  subject: {
+    id: number;
+    name: string;
+    code: string;
+    credits: number;
+  };
 }
 
 export interface GPACalculation {
@@ -30,14 +34,14 @@ export function calculateGPA(results: ResultEntry[]): GPACalculation {
   if (results.length === 0) {
     return { gpa: 0, totalCredits: 0, totalGradePoints: 0 };
   }
+const totalGradePoints = results.reduce((sum, result) => {
+  return sum + result.points * result.subject?.credits!;
+}, 0);
 
-  const totalGradePoints = results.reduce((sum, result) => {
-    return sum + parseFloat(result.points) * result.credits;
-  }, 0);
+const totalCredits = results.reduce((sum, result) => {
+  return sum + (result.subject?.credits || 0);
+}, 0);
 
-  const totalCredits = results.reduce((sum, result) => {
-    return sum + result.credits;
-  }, 0);
 
   const gpa = totalCredits > 0 ? totalGradePoints / totalCredits : 0;
 

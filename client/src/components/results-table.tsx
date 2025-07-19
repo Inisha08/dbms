@@ -37,19 +37,18 @@ export function ResultsTable({
   const [semesterFilter, setSemesterFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredResults = results.filter((result) => {
-    const matchesSemester =
-      semesterFilter === "all" || result.semester.toString() === semesterFilter;
+const filteredResults = results.filter((result) => {
+  const matchesSemester =
+    semesterFilter === "all" || result.semester.toString() === semesterFilter;
 
-    const matchesSearch =
-      !searchTerm ||
-      result.subject_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (showStudent &&
-        // If you have student name available, you can add it here instead of student_id
-        false);
+const matchesSearch =
+!searchTerm ||
+(result.subject?.name &&
+  result.subject.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    return matchesSemester && matchesSearch;
-  });
+  return matchesSemester && matchesSearch;
+});
+
 
   const semesters = Array.from(new Set(results.map((r) => r.semester))).sort();
 
@@ -116,8 +115,8 @@ export function ResultsTable({
                       Student ID: {result.student_id}
                     </TableCell>
                   )}
-                  <TableCell className="font-medium">{result.subject_name}</TableCell>
-                  <TableCell>{result.credits}</TableCell>
+                  <TableCell className="font-medium">{result.subject?.name ||"N/A"}</TableCell>
+                  <TableCell>{result.subject?.credits?? "N/A"}</TableCell>
                   <TableCell>
                     <GradeBadge grade={result.grade} />
                   </TableCell>
