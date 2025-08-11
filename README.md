@@ -4,11 +4,12 @@ A small PostgreSQL + Express (TypeScript) REST API for students, teachers, subje
 
 ## Quick start
 1. Copy `.env`:
-
+```nev
 PORT=4000
 DATABASE_URL=postgresql://user:pass@localhost:5432/schooldb
 JWT_SECRET=change_me
 SALT_ROUNDS=10
+```
 
 2. Install & run:
 ```bash
